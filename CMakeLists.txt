@@ -1,5 +1,6 @@
-cmake_minimum_required(VERSION 3.28)
-project(Game LANGUAGES CXX)
+cmake_minimum_required(VERSION 3.5)
+project(Parasheep LANGUAGES CXX)
+
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 option(BUILD_SHARED_LIBS "Build shared libraries" ON)
@@ -19,6 +20,16 @@ set(SFML_BUILD_SHARED_LIBS ON CACHE BOOL "Build SFML as shared libraries")
 set(SFML_STATIC_LIBRARIES OFF CACHE BOOL "Don't build static SFML libraries")
 FetchContent_MakeAvailable(SFML)
 
+set(TGUI_BACKEND SFML_GRAPHICS)
+set(TGUI_BUILD_FRAMEWORK OFF)
+set(TGUI_BUILD_GUI_BUILDER OFF)
+set(TGUI_SHARED_LIBS ON)
+FetchContent_Declare(
+    TGUI
+    GIT_REPOSITORY https://github.com/texus/TGUI.git
+    GIT_TAG v1.6.1
+)
+FetchContent_MakeAvailable(TGUI)
 
 FetchContent_Declare(sfml_shared_headers
     GIT_REPOSITORY https://github.com/johnnywz00/SFML-shared-headers.git
@@ -37,6 +48,10 @@ set_target_properties(${PROJECT_NAME} PROPERTIES
 	RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin
 )
 
+target_include_directories(${PROJECT_NAME} PRIVATE
+	${TGUI_INCLUDE_DIR}
+)
+
 if(APPLE)
     set_target_properties(${PROJECT_NAME} PROPERTIES
 		MACOSX_BUNDLE FALSE
@@ -53,6 +68,8 @@ endif()
 
 target_link_libraries(${PROJECT_NAME} PRIVATE 
 	zsprite resource_manager timed_event_manager jwzsfml jwzhpp
+	high_score
+	tgui
 	sfml-audio sfml-graphics sfml-window sfml-system
 )
 
@@ -83,6 +100,14 @@ if(WIN32)
 			${sfml_shared_headers_SOURCE_DIR}/sfml-dlls/${SFML_ARCH}
             $<TARGET_FILE_DIR:${PROJECT_NAME}>
 
+# DON'T ADD THIS COPY STEP IF USING TGUI and GitHub Actions: 
+# TGUI places the .dll where it ends up alongside 
+# the executable after .yml actions have run.
+#
+#		COMMAND ${CMAKE_COMMAND} -E copy
+#			${TGUI_BINARY_DIR}/lib/Release/tgui.dll
+#           $<TARGET_FILE_DIR:${PROJECT_NAME}>
+
         VERBATIM
     )
 
@@ -94,6 +119,10 @@ elseif(APPLE)
 
         COMMAND ${CMAKE_COMMAND} -E copy_directory
 			${SFML_BINARY_DIR}/lib
+            $<TARGET_FILE_DIR:${PROJECT_NAME}>/libs/
+
+        COMMAND ${CMAKE_COMMAND} -E copy_directory
+			${TGUI_BINARY_DIR}/lib
             $<TARGET_FILE_DIR:${PROJECT_NAME}>/libs/
 
         COMMAND ${CMAKE_COMMAND} -E copy_directory
@@ -126,7 +155,15 @@ elseif(UNIX AND NOT APPLE)
         COMMAND ${CMAKE_COMMAND} -E copy
             ${SFML_BINARY_DIR}/lib/libsfml-system.so.2.6
             $<TARGET_FILE_DIR:${PROJECT_NAME}>/libs/
-          
+       
+		COMMAND ${CMAKE_COMMAND} -E copy
+            ${TGUI_BINARY_DIR}/lib/libtgui.so
+            $<TARGET_FILE_DIR:${PROJECT_NAME}>/libs/
+
+ 		COMMAND ${CMAKE_COMMAND} -E copy
+            ${TGUI_BINARY_DIR}/lib/libtgui.so.1.6.1
+            $<TARGET_FILE_DIR:${PROJECT_NAME}>/libs/
+
 		COMMAND ${CMAKE_COMMAND} -E copy
 			"${CMAKE_SOURCE_DIR}/Linux README.txt"
 			$<TARGET_FILE_DIR:${PROJECT_NAME}>
