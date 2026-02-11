@@ -2,134 +2,76 @@
 #include "sfmlTguiApp.hpp"
 
 
-SFGameWindow::SFGameWindow () {
-	
-	setup(defaultTitle, vecU(defaultWidth, defaultHeight));
-}
-
-SFGameWindow::SFGameWindow (const string& title, const vecU& size) {
-	
-	setup(title, size);
-}
-	
-void SFGameWindow::setup (const string& title, const vecU& size) {
-	
-	windowTitle = title;
-	windowSize = size;
-	_isFullscreen = true;
-	_isStretched = false;
-	_isDone = false;
-	_isFocused = true;
-	create();
-	if (!loadByMethod(icon, iconPath)) {
-		cerr << "Couldn\'t load icon! \n";
+FullscreenOnlyApp::FullscreenOnlyApp ()
+{
+	VideoMode mode = VideoMode::getDesktopMode();
+	auto style = Style::Default;
+	auto fsmodes = VideoMode::getFullscreenModes();
+	if (fsmodes.size()) {
+		mode = fsmodes[0];
+		style = Style::Fullscreen;
 	}
+	window.create(mode, "", style);
+	
+	window.setFramerateLimit(60);
+	
+	if (!icon.loadFromFile((Resources::executingDir() / "resources" / "images" / "icon.png").string()))
+		cerr << "Couldn't load icon. " << endl;
 	else
 		window.setIcon(icon.getSize().x, icon.getSize().y, icon.getPixelsPtr());
-	}
-
-void SFGameWindow::create () {
 	
-    VideoMode mode = VideoMode::getDesktopMode();
-	auto style = Style::Default;
-	
-		/* As of SFML 2.6.1, fullscreen modes were not supported on ARM
-		 * Macs. We need to perform a check before unquestioningly switching
-		 * to fullscreen mode.
-		 */
-	if (_isFullscreen) {
-		auto fsmodes = VideoMode::getFullscreenModes();
-		if (fsmodes.size()) {
-			// ** Will we ever need to select a mode other than [0]?
-			mode = fsmodes[0];
-			style = Style::Fullscreen;
-		}
-		else _isFullscreen = false;
-	}
-	window.create(mode, windowTitle, style);
-	View v { window.getDefaultView() };
-	screenOffsetFrom1440x900 = vecf(-(v.getSize().x - 1440) / 2,
-									-(v.getSize().y - 900) / 2);
-	window.setFramerateLimit(60);
-	setToggledView(_isStretched);
-}
-	
-void SFGameWindow::toggleFullscreen () {
-	
-	_isFullscreen = !_isFullscreen;
-	destroy();
-	create();
-}
-
-void SFGameWindow::toggleStretchGraphics () {
-	
-	_isStretched = !_isStretched;
-	setToggledView(_isStretched);
-}
-
-void SFGameWindow::setToggledView (bool stretched) {
-	
-	View v { FloatRect(0, 0, 1440, 900) };
-	if (!stretched) {
-		v = window.getDefaultView();
-		v.move(screenOffsetFrom1440x900);
-	}
-	window.setView(v);
-}
-
-
-
-Game::Game () :
-		window() {
-			
     srand(unsigned(time(nullptr)));
-            
-    gui.setTarget(*(window.getRenderWindow()));
-    tgui::Theme::setDefault("resources/Black.txt");
-            
-    state.w = window.getRenderWindow();
-    state.gw = &window;
-    state.timedMgr = &timedMgr;
-    state.gui = &gui;
+		
+    state.renWin = &window;
+	state.app = this;
+	state.timedMgr = &timedMgr;
+	state.gui = &gui;
+
+	gui.setTarget(window);
+	tgui::Theme::setDefault((Resources::executingDir() / "resources" / "Black.txt").string());
+
     state.onCreate();
+	
     clock.restart();
 }
 
-void Game::update () {
-	
-	state.mxOld = state.mx;
-	state.myOld = state.my;
+void FullscreenOnlyApp::run ()
+{
+	while (!isDone) {
+		update();
+		
+		window.clear(redrawColor);
+		state.draw();
+		gui.draw();
+		window.display();
+		
+		elapsed += clock.restart();
+	}
+}
+
+void FullscreenOnlyApp::update ()
+{
+	state.oldMouse = state.mouseVec;
     Event event;
-    while (window.window.pollEvent(event)) {
-		vecf adj = window.window.mapPixelToCoords(vecI(event.mouseButton.x,
+    while (window.pollEvent(event)) {
+		vecF adj = window.mapPixelToCoords(vecI(event.mouseButton.x,
 													   event.mouseButton.y));
         switch(event.type) {
 				
             case Event::KeyPressed:
                 switch(event.key.code) {
-                    case Keyboard::F5:
-                        window.toggleFullscreen();
-						break;
-					case Keyboard::F6:
-						window.toggleStretchGraphics();
-						break;
                     default:
                         state.onKeyPress(event.key.code);
 						break;
                 }
-				break;
+                break;
 				
 			case Event::KeyReleased:
-				switch(event.key.code) {
-					default:
-						state.onKeyRelease(event.key.code);
-						break;
-				}
-				break;
+				state.onKeyRelease(event.key.code);
+                break;
 				
 			case Event::MouseMoved:
-				state.mx = int(adj.x);
-				state.my = int(adj.y);
+				state.mouseVec = toVecI(adj);
 				break;
 				
             case Event::MouseButtonPressed:
@@ -141,43 +83,35 @@ void Game::update () {
 				break;
 				
             case Event::Closed:
-                window.close();  break;
-				
-            case Event::LostFocus:
-                window._isFocused = false;  break;
-				
-            case Event::GainedFocus:
-                window._isFocused = true;  break;
+				close();
+				break;
 				
             default:
                 break;
         }
-        if (gui.handleEvent(event))
-            ; // pass
+		if (gui.handleEvent(event))
+			/* Pass */
+			;
     }
-    
     state.update(elapsed);
 }
 
 
-
-int main () {
-	
-        /* XCode folly: two instances of the program are launched if
-		 * we customize the working directory. We can cause the extraneous
-         * instance to silently quit immediately by giving it a relative
-         * path that it can't find.
-         */
+int main (int argc, char* argv[])
+{
+/* XCode folly: two instances of the program are launched if
+ * we customize the working directory. We can cause the extraneous
+ * instance to silently quit immediately by giving it a relative
+ * path that it can't find.
+ */
+#ifdef DEBUG
     Image img;
-    if (!img.loadFromFile(iconPath))
+	if (!img.loadFromFile("resources/images/icon.png"))
         return EXIT_FAILURE;
+#endif
+	
+	Resources::initialize(argc, argv);
 
-
-    Game game;
-    while (!game.getWindow()->isDone()) {
-        game.update();
-        game.render();
-        game.lateUpdate();
-    }
-    
+	FullscreenOnlyApp app;
+	app.run();
 }

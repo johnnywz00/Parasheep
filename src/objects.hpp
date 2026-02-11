@@ -11,38 +11,31 @@
 
 #include "jwzsfml.hpp"
 #include "timedeventmanager.hpp"
+#include "resourcemanager.hpp"
 #include "highscore.hpp"
 #include <TGUI/TGUI.hpp>
 #include <TGUI/Backend/SFML-Graphics.hpp>
 #include "vsprite.hpp"
 
-//#define _EMBEDDING
-#include "embedded.hpp"
 
 
-inline float floatRate = 1;
-
-
-struct Enemy {
-    
-    Enemy () {
-        
-        float i = randRange(-350, -200);
-        jumpVel = i / 100;
-        floatRate = ::floatRate * (float(randRange(90, 110)) / 100);
-    }
-    
-    FloatRect hitBox () {
-        
+struct Enemy
+{    
+	Enemy ();
+   
+    FloatRect hitBox ()
+	{
         int ofs = 4;
         FloatRect fr = s.gGB();
         return FloatRect(fr.left + ofs, fr.top + ofs,
                          fr.width - 2 * ofs, fr.height - 2 * ofs);
     }
+	
+	inline static float	gFloatRate = 1;
     
     Sprite          s;
     vecF            velocity{ 0, 0 };
-    float           xLine = ScrW - 15;
+    float           xLine = scrw - 15;
     float           yVel = 0;
     float           jumpVel = -2;
     float           floatDeg = 90;
@@ -55,16 +48,17 @@ struct Enemy {
 };
 
 
-struct Projectile: public VSprite {
-    
-    Projectile (const Texture& tx) {
-        
-        s.setTexture(tx);
-        ::centerOrigin(s);
+
+struct Projectile: public VSprite
+{
+    Projectile ()
+	{
+        s.setTexture(gTexture("projectile"));
+        centerOrigin();
     }
 
-    float mass () {
-        
+    float mass ()
+	{
         float r = gGB().width / 2;
         return (4/3) * pi * r * r * r;
     }
@@ -72,4 +66,5 @@ struct Projectile: public VSprite {
     bool readyToErase = false;
 	bool isLoaded = true;
 };
+
 #endif /* objects_hpp */

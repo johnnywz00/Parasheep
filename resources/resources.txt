@@ -1,0 +1,26 @@
+@images
+cloud.png	cloud
+deh.png		deh
+launcher.png	launcher
+proj.png	projectile
+sheepL.png	sheep
+sheephit.png	fallingSheep
+sheeppara.png	parasheep
+
+#repeated
+ground.png	ground		repeat
+
+@fonts
+BlitzkriegNF.otf	menuButton
+Monaco.ttf		debug
+BrassettBold.otf	menuTitle
+Futura.ttc		stats
+
+@sounds
+gameover2.wav	gameOver
+hit1.wav	shoot
+jump3.wav	hitLanded
+lose5.wav	hitDropping
+upgrade1.wav	specialGun
+
+
