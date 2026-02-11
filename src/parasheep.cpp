@@ -462,8 +462,8 @@ void State::setUpHighScores ()
     }
 
     auto p = tgui::Panel::create();
-    p->setSize(700, 700);
-    p->setPosition(350, 100);
+	p->setSize(800, 700);
+	p->setPosition(scrcx - (p->getSize().x / 2), scrcy - (p->getSize().y / 2));
     gui->add(p, "scores");
     auto l = tgui::Label::create();
     l->setOrigin(.5, .5);
