@@ -37,6 +37,7 @@ FullscreenOnlyApp::FullscreenOnlyApp ()
 
 void FullscreenOnlyApp::run ()
 {
+	cout << "Entering app.run()\n";
 	while (!isDone) {
 		update();
 		
@@ -117,5 +118,17 @@ int main (int argc, char* argv[])
 
 	FullscreenOnlyApp app;
 	cout << "Preparing to launch game loop for Parasheep\n";
-	app.run();
+	try {
+		app.run();
+		cout << "Exited loop\n";
+	}
+	catch (std::runtime_error& e) {
+		cerr << "Caught runtime exception: " << e.what() << endl;
+	}
+	catch (std::exception& e) {
+		cerr << "Caught exception: " << e.what() << endl;
+	}
+	catch (...) {
+		cerr << "Caught unknown exception\n";
+	}
 }
