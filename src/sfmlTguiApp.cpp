@@ -112,8 +112,10 @@ int main (int argc, char* argv[])
 	}
 #endif
 	
+	cout << "Initializing Resources\n";
 	Resources::initialize(argc, argv);
 
 	FullscreenOnlyApp app;
+	cout << "Preparing to launch game loop for Parasheep\n";
 	app.run();
 }
