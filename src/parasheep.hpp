@@ -1,22 +1,26 @@
+/*
+ TO DO:
+ 
+ sun goes down moon/stars come out
+ cactus: sheep hang
+ horizontal moving sheep with jetpack
+ tiny ephemeral target which if hit gives you a bomb to wipe all current sheep
+ "   "  gives you rapid fire bullets; target shows countdown till disappearing
+ death animation
+ add score if ≈10 sheep shot consec without miss
+ pts based on distance sheep is from gun
+ 
+ */
+
 #ifndef PARASHEEP_H
 #define PARASHEEP_H
 
 #include "objects.hpp"
 
-
-/*
- TO DO:
- 
-sky turns to night, sun goes down moon/stars come out
-cactus: sheep hang
-horizontal moving sheep with jetpack
-tiny ephemeral target which if hit gives you a bomb to wipe all current sheep
- "   "  gives you rapid fire bullets; target shows countdown till disappearing
-death animation
-add score if ≈10 sheep shot consec without miss
-pts based on distance sheep is from gun
-
- */
+// (Hopefully) temporary disabling of TGUI/high scores on Windows
+#if defined(_WIN32) || defined(_WIN64)
+	#define WINDOWS
+#endif
 
 class FullscreenOnlyApp;
 

@@ -521,47 +521,49 @@ void State::setUpHighScores ()
 
 void State::resetGame ()
 {
-    enemies.clear();
-    gunMode = 0;
-    power = 0;
-    numOnGround = 0;
-    numShot = 0;
-    totalShots = 0;
-    shootingPct = 0.0f;
-    score = 0;
-    lastEnemyTime = Time();
-    lastFireTime = Time();
-    timeBetweenEnemies = 5;
-    Enemy::gFloatRate = 1;
-    runRate = -1;
-    level = 1;
-    gameOver = false;
-    running = false;
-    pullingBack = false;
+	enemies.clear();
+	gunMode = 0;
+	power = 0;
+	numOnGround = 0;
+	numShot = 0;
+	totalShots = 0;
+	shootingPct = 0.0f;
+	score = 0;
+	lastEnemyTime = Time();
+	lastFireTime = Time();
+	timeBetweenEnemies = 5;
+	Enemy::gFloatRate = 1;
+	runRate = -1;
+	level = 1;
+	gameOver = false;
+	running = false;
+	pullingBack = false;
 	shotFiredThisFrame = false;
-    launcher.sRot(initAngle);
-    powerBar[1].setScale(1, 0);
+	launcher.sRot(initAngle);
+	powerBar[1].setScale(1, 0);
 	
-    projs.clear();
+	projs.clear();
 	projs.emplace_back();
-    curProj = &projs.back();
-    setLoadedProjPos();
+	curProj = &projs.back();
+	setLoadedProjPos();
 	
-    newEnemy(Time());
-    levelLabel.setString("LEVEL 1");
+	newEnemy(Time());
+	levelLabel.setString("LEVEL 1");
 	auto sc = gui->get("scores");
-    if (sc)
+	if (sc)
 		sc->setVisible(false);
-
-    forNum (20) {
+	
+	forNum (20) {
 		Color c = Color(255, 165, 54);
 		Color c2 = Color(227, 229, 164);
 		bkgd[i].setFillColor(Color(c.r + ((c2.r - c.r) / 20) * i,
-                                  c.g + ((c2.g - c.g) / 20) * i,
-                                  c.b + ((c2.b - c.b) / 20) * i ));
+								   c.g + ((c2.g - c.g) / 20) * i,
+								   c.b + ((c2.b - c.b) / 20) * i ));
 	}
 	
+#ifndef WINDOWS
 	setUpHighScores();
+#endif
 }
 
 void State::startGame ()
@@ -678,7 +680,9 @@ void State::endGame ()
    gSound("gameOver").play();
    gameOver = true;
    renWin->setMouseCursorVisible(true);
+#ifndef WINDOWS
    showHighScores(score, level);
+#endif
 }
 
 void State::showHighScores(int score, int level)
