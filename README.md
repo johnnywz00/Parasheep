@@ -2,7 +2,7 @@
 
 ## C++/SFML arcade game with gravity-affected projectiles
 
-IMG
+<img width="1728" height="1117" alt="Screenshot 2026-02-11 at 10 01 30 PM" src="https://github.com/user-attachments/assets/e9ba6e04-1afb-40ce-87b5-3488de66d251" />
 
 ### ABOUT THE PROJECT
 This program started off as a basic exercise (in Python, originally) when I was teaching myself projectile physics. Eventually I gamified it for the benefit of my small children, although they relied on me to aim the gun while they pressed "fire." The theme of shooting at a parachuting entity harks back to the ancient game Airborne! which I played as a child.  
