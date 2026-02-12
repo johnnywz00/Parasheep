@@ -106,8 +106,10 @@ int main (int argc, char* argv[])
  */
 #ifdef DEBUG
     Image img;
-	if (!img.loadFromFile("resources/images/icon.png"))
-        return EXIT_FAILURE;
+	if (!img.loadFromFile("resources/images/icon.png")) {
+		cerr << "DEBUG preprocessor symbol is defined.\n";
+		return EXIT_FAILURE;
+	}
 #endif
 	
 	Resources::initialize(argc, argv);
