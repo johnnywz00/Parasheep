@@ -108,7 +108,7 @@ int main (int argc, char* argv[])
 #ifdef DEBUG
     Image img;
 	if (!img.loadFromFile("resources/images/icon.png")) {
-		cerr << "DEBUG preprocessor symbol is defined.\n";
+		cerr << "DEBUG preprocessor symbol is defined, but icon.png can't be found through relative path.\n";
 		return EXIT_FAILURE;
 	}
 #endif
@@ -117,10 +117,11 @@ int main (int argc, char* argv[])
 	Resources::initialize(argc, argv);
 
 	FullscreenOnlyApp app;
+	
 	cout << "Preparing to launch game loop for Parasheep\n";
 	try {
 		app.run();
-		cout << "Exited loop\n";
+		cout << "Exited Parasheep loop\n";
 	}
 	catch (std::runtime_error& e) {
 		cerr << "Caught runtime exception: " << e.what() << endl;
