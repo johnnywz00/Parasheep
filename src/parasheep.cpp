@@ -31,6 +31,10 @@ void State::onCreate ()
     ground.setTextureRect(IntRect(0, 0, scrw, ground.gLB().height));
     ground.setOrigin(0, ground.gLB().height);
     ground.sP(0, scrh);
+	
+	cactus.setTexture(gTexture("cactus"));
+	cactus.setOrigin({cactus.gLB().width / 2, cactus.gLB().height - 1});
+	cactus.setPosition(scrcx - 50, scrh - ground.gLB().height + 5);
 
     platform.setSize(vecF(60, 60));
     platform.sP(0, scrh - 65);
@@ -65,42 +69,7 @@ void State::onCreate ()
     powerBar[0].setPosition(10, scrcy + powerBar[0].gLB().height / 2);
     powerBar[1].setPosition(13, scrcy + powerBar[1].gLB().height / 2);
 
-       //== MENU SETUP == //
-	menuBkgd.setSize({scrw, scrh});
-    menuBkgd.setFillColor(Color::Black);
-
-    gameTitle.setFont(gFont("menuTitle"));
-    gameTitle.setString(String("P A R A S H E E P"));
-    gameTitle.setCharacterSize(130);
-    gameTitle.setFillColor(Color::Yellow);
-    gameTitle.setOutlineColor(Color(80, 80, 80));
-    gameTitle.setOutlineThickness(5);
-    centerOrigin(gameTitle);
-    gameTitle.sP(scrcx, 100);
-
-    string str[numButtons];
-    str[0] = "Start!";
-    str[numButtons-1] = "Exit";
-
-    for (int i = 0; i < numButtons; ++i) {
-       vecF bp(i > 7 ? buttonPos.x + buttonSize.x + buttonPadding : buttonPos.x,
-           buttonPos.y + (i % 8 * (buttonSize.y + buttonPadding)));
-       rects[i].setSize(buttonSize);
-       rects[i].setFillColor(Color(225, 198, 32));
-       if (i == numButtons - 1)
-           rects[i].setFillColor(Color(225, 165, 71));
-       rects[i].setOutlineColor(Color(54, 60, 25));
-       rects[i].setOutlineThickness(5);
-       rects[i].setOrigin(buttonSize.x / 2., buttonSize.y / 2.);
-       rects[i].setPosition(bp);
-       labels[i].setFont(gFont("menuButton"));
-       labels[i].setString(String(str[i]));
-       labels[i].setCharacterSize(36);
-       labels[i].setFillColor(Color(50, 50, 50));
-       FloatRect rect = labels[i].gLB();
-       labels[i].setOrigin(rect.left + rect.width / 2., rect.top + rect.height / 2.);
-       labels[i].sP(bp);
-    }
+	menuCreate();
 
     resetGame();
 } //end onCreate
@@ -396,12 +365,13 @@ void State::draw ()
 	renWin->draw(powerBar[0]);
 	renWin->draw(powerBar[1]);
 	
-		// The shot/falling sheep need to be drawn first to disappear behind the scenery
+	// The shot/falling sheep need to be drawn first to disappear behind the scenery
 	for (auto& e : enemies)
 		if (e.hit)
 			renWin->draw(e.s);
 	renWin->draw(platform);
 	renWin->draw(ground);
+	renWin->draw(cactus);
 	renWin->draw(deh);
 	renWin->draw(launcher);
 	for (auto& p : projs)
@@ -412,6 +382,64 @@ void State::draw ()
 		if (!e.hit)
 			renWin->draw(e.s);
 	renWin->draw(guideline);
+}
+
+void State::menuCreate ()
+{
+	/* Smatter the screen with faint PARASHEEP texts */
+	bkgdRt.create(scrw, scrh);
+	bkgdRt.clear(CHARCOAL);
+	Text tmp {"PARASHEEP", gFont("menuTitle"), 50};
+	forNum(70) {
+		tmp.setFillColor(Color(0, 0, 0, randRange(50, 80)));
+		tmp.setPosition((float)randRange(-20, scrw - 100), (float)randRange(scrh - 30));
+		float factor = randFloat(.5, 2);
+		tmp.setScale(factor + randFloat(-.1, .1), factor + randFloat(-.1, .1));
+		tmp.setRotation((280 + randRange(160)) % 360); // angles stay between 280-360 or 0-80
+		bkgdRt.draw(tmp);
+	}
+	bkgdRt.display();
+	menuBkgd.setTexture(bkgdRt.getTexture());
+	centerOrigin(menuBkgd);
+	menuBkgd.setPosition(scrcx, scrcy);
+
+	gameTitle.setFont(gFont("menuTitle"));
+	gameTitle.setString(String("P A R A S H E E P"));
+	gameTitle.setCharacterSize(130);
+	gameTitle.setFillColor(decreaseSaturation(Color::Yellow, 40));
+	gameTitle.setOutlineColor(Color(80, 80, 80));
+	gameTitle.setOutlineThickness(5);
+	centerOrigin(gameTitle);
+	gameTitle.sP(scrcx, scrcy);
+
+	/* Set up buttons */
+	string str[numButtons];
+	str[0] = "Commence!";
+	str[numButtons-1] = "Retreat.";
+
+	for (int i = 0; i < numButtons; ++i) {
+	    rects[i].setSize(buttonSize);
+		rects[i].setFillColor(Color(61, 173, 65)); // Color(225, 198, 32));
+	    if (i == numButtons - 1)
+			rects[i].setFillColor(Color(215, 60, 68)); // Color(225, 165, 71));
+	    rects[i].setOutlineColor(Color(54, 60, 25));
+	    rects[i].setOutlineThickness(5);
+		centerOrigin(rects[i]);
+		float ofs = 300;
+		rects[i].setPosition(scrcx - ofs + i * 2 * ofs, scrcy - 250);
+	    labels[i].setFont(gFont("menuButton"));
+	    labels[i].setString(String(str[i]));
+	    labels[i].setCharacterSize(36);
+	    labels[i].setFillColor(Color(50, 50, 50));
+	    FloatRect rect = labels[i].gLB();
+		centerOrigin(labels[i]);
+		labels[i].setPosition(rects[i].getPosition().x, rects[i].getPosition().y - 16);
+	 }
+	
+	instrucsTxt = Text(instrucsStr, gFont("menuButton"), 22);
+	instrucsTxt.setFillColor(Color(215, 220, 210, 200));
+	centerOrigin(instrucsTxt);
+	instrucsTxt.setPosition(scrcx, scrh - 180);
 }
 
 void State::menuClick (int x, int y)
@@ -444,6 +472,7 @@ void State::menuDraw ()
 	   renWin->draw(b);
    for (auto& b : labels)
 	   renWin->draw(b);
+	renWin->draw(instrucsTxt);
 }
 
 void State::setUpHighScores ()

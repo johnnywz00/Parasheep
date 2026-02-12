@@ -62,7 +62,7 @@ private:
 						, initAngle = -45
 						, powerRate = .8
 						, powerScale = 360
-						, maxPower = 27
+						, maxPower = 29
 						, projOffset = 35
 						, guideLength = 250
 						, groundLevel = scrh - 48
@@ -75,7 +75,8 @@ private:
 						, timeBetweenFires = .4
 	;
  
- 
+	void menuCreate ();
+	
 	void menuClick (int x, int y);
 	
 	void menuUpdate ();
@@ -121,6 +122,7 @@ private:
 	Sprite              ground
 						, launcher
 						, deh
+						, cactus
 	;
 	Sprite              clouds[10];
 	vector<Projectile>  projs;
@@ -171,15 +173,21 @@ private:
 
 	static constexpr int numButtons = 2;
 	const vecF         	buttonSize = vecF(500, 55);
-	const uint          buttonPadding = 15;
+	const string		instrucsStr =
+		"Use the Left/Right keys to aim the projectile launcher.\n"
+		"Hold Space proportionate to the amount of power for the shot.\n"
+		"Shoot the 'chuting sheep.\n"
+		" \n \nJohn Ziegler, 2020-2024   johnnywz00@yahoo.com"
+	;
 	
-    RectangleShape      menuBkgd
-                        , rects[numButtons]
+	RenderTexture		bkgdRt;
+	Sprite				menuBkgd;
+    RectangleShape      rects[numButtons]
 	;
     Text                gameTitle
+						, instrucsTxt
                         , labels[numButtons]
 	;
-    vecF                buttonPos = vecF(scrcx - buttonSize.x / 2 - buttonPadding / 2, scrcy - 80);
 };  //end class State
 
 #endif

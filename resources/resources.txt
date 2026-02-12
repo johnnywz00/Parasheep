@@ -1,26 +1,28 @@
 @images
-cloud.png	cloud
-deh.png		deh
+cloud.png		cloud
+deh.png			deh
 launcher.png	launcher
-proj.png	projectile
-sheepL.png	sheep
+proj.png		projectile
+sheepL.png		sheep
 sheephit.png	fallingSheep
 sheeppara.png	parasheep
+cactus.png		cactus
 
 #repeated
-ground.png	ground		repeat
+ground.png		ground		repeat
 
 @fonts
 BlitzkriegNF.otf	menuButton
-Monaco.ttf		debug
+Monaco.ttf			debug
 BrassettBold.otf	menuTitle
-Futura.ttc		stats
+Futura.ttc			stats
+#Courier New Bold.ttf used by TGUI
 
 @sounds
 gameover2.wav	gameOver
-hit1.wav	shoot
-jump3.wav	hitLanded
-lose5.wav	hitDropping
+hit1.wav		shoot
+jump3.wav		hitLanded
+lose5.wav		hitDropping
 upgrade1.wav	specialGun
 
 
