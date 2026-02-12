@@ -2,14 +2,14 @@
 
 ## C++/SFML arcade game with gravity-affected projectiles
 
-IMG
+<img width="1728" height="1117" alt="Screenshot 2026-02-11 at 10 01 30 PM" src="https://github.com/user-attachments/assets/e9ba6e04-1afb-40ce-87b5-3488de66d251" />
 
 ### ABOUT THE PROJECT
 This program started off as a basic exercise (in Python, originally) when I was teaching myself projectile physics. Eventually I gamified it for the benefit of my small children, although they relied on me to aim the gun while they pressed "fire." The theme of shooting at a parachuting entity harks back to the ancient game Airborne! which I played as a child.  
 
 The game is one of several projects that I undertook in the early days of my programming self-teaching (ca. 2020). The projects of this period were motivated primarily by the desire to know if I could "solve" the challenge of bringing this or that mechanic or concept into being through programming language, largely without consulting any other sources to see how it was done (this was also pre-AI era). The projects were characterized by a lack of concern for code organization, best practices, readability, or maintainability, because my free time was very limited and my chief objective was getting the satisfaction of knowing I got the idea to work. Most of the time, when I achieved that much of the goal, I was ready to move on to the next logical challenge rather than pore over the details of making a well-rounded product fit for public consumption. I've taken a little time to restructure some things before posting the code here; nonetheless, much about the program remains primitive or suboptimal as it was originally written. As with nearly all my projects, I can think of many things that could make the game more interesting, polished, or full-featured; whether I'll ever find/make the time to circle back around and implement them remains to be seen.
 
-I've employed the TGUI library to facilitate entering and displaying high scores for Letter Invaders (credits to Bruno Van de Velde).
+I've employed the TGUI library to facilitate entering and displaying high scores (credits to Bruno Van de Velde).
 
 (NOTE: Linking to TGUI was causing errors in the Windows version. For now, the high scores feature is disabled in Windows. It should work fine on Mac and Linux.)
 
