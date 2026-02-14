@@ -181,6 +181,7 @@ private:
 		"Use the Left/Right keys to aim the projectile launcher.\n"
 		"Hold Space proportionate to the amount of power for the shot.\n"
 		"Shoot the 'chuting sheep.\n"
+		"(From high scores, Y will restart and Esc will return to the menu.)\n"
 		" \n \nJohn Ziegler, 2020-2024   johnnywz00@yahoo.com"
 	;
 	
