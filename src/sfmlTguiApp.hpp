@@ -1,10 +1,3 @@
-//
-//  sfmlApp.hpp
-//  Hopscotch
-//
-//  Created by John Ziegler on 10/22/24.
-//  Copyright © 2024 John Ziegler. All rights reserved.
-//
 
 #ifndef sfmlTguiApp_hpp
 #define sfmlTguiApp_hpp
